@@ -30,35 +30,50 @@ class Play extends Phaser.Scene {
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
         // Init score
         this.p1Score = 0;
-        let scoreConfig = {
+        let textConfig = {
             fontFamily: 'Courier',
             fontSize: '28px',
-            backgroundColor: '#F3B141',
+            backgroundColor: '#facade',
             color: '#843605',
             align: 'right',
             padding: {
                 top: 5,
                 bottom: 5,
             },
-            fixedWidth: 100
+            fixedWidth: 50
         }
-        this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding * 2, this.p1Score, scoreConfig);
-        scoreConfig.fixedWidth = 0;
 
-        // 60-sec play clock
-        /* Will delayedCall will trigger an event. The first parameter
-        *  specifies how long will pass before the event is triggered, and the
-        *  second is the callback function that will be run after the event is
-        *  triggered. */
+        // Add timer text to center
+        this.timeLeft = this.add.text(game.config.width / 2, borderUISize + borderPadding * 2, this.p1Score, textConfig).setOrigin(0.5, 0);
+        // Changed fixed width and background color for score
+        textConfig.backgroundColor = '#F3B141'; 
+        textConfig.fixedWidth = 100; 
+        
+        this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding * 2, this.p1Score, textConfig);
+        textConfig.fixedWidth = 0;
 
         // Game over flag
         this.gameOver = false;
+        /* Start a timer that will trigger a callback function which will end
+         * the game */
+        this.timer = this.time.addEvent({
+            delay: 10000, // ms
+            callback: () => {
+                this.add.text(game.config.width/2, game.config.height/2, "GAME OVER", textConfig).setOrigin(0.5);
+                this.add.text(game.config.width/2, game.config.height/2 + 64, "Press (R) to Restart or ← for Menu", textConfig).setOrigin(0.5);
+                this.gameOver = true;
 
-        this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
-            this.add.text(game.config.width/2, game.config.height/2, "GAME OVER", scoreConfig).setOrigin(0.5);
-            this.add.text(game.config.width/2, game.config.height/2 + 64, "Press (R) to Restart or ← for Menu", scoreConfig).setOrigin(0.5);
-            this.gameOver = true;
-        }, null, this);
+            },
+            loop: false,
+        });
+
+
+        //TODO remove
+        // this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
+        //     this.add.text(game.config.width/2, game.config.height/2, "GAME OVER", textConfig).setOrigin(0.5);
+        //     this.add.text(game.config.width/2, game.config.height/2 + 64, "Press (R) to Restart or ← for Menu", textConfig).setOrigin(0.5);
+        //     this.gameOver = true;
+        // }, null, this);
     }
 
     update() {
