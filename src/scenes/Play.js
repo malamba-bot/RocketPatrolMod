@@ -57,7 +57,7 @@ class Play extends Phaser.Scene {
         /* Start a timer that will trigger a callback function which will end
          * the game */
         this.timer = this.time.addEvent({
-            delay: 10000, // ms
+            delay: game.settings.gameTimer,
             callback: () => {
                 this.add.text(game.config.width/2, game.config.height/2, "GAME OVER", textConfig).setOrigin(0.5);
                 this.add.text(game.config.width/2, game.config.height/2 + 64, "Press (R) to Restart or ← for Menu", textConfig).setOrigin(0.5);
@@ -66,17 +66,11 @@ class Play extends Phaser.Scene {
             },
             loop: false,
         });
-
-
-        //TODO remove
-        // this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
-        //     this.add.text(game.config.width/2, game.config.height/2, "GAME OVER", textConfig).setOrigin(0.5);
-        //     this.add.text(game.config.width/2, game.config.height/2 + 64, "Press (R) to Restart or ← for Menu", textConfig).setOrigin(0.5);
-        //     this.gameOver = true;
-        // }, null, this);
     }
 
     update() {
+        // Update timer text
+        this.timeLeft.text = Math.ceil(this.timer.getRemainingSeconds());
         // Check key input for restart
         if(this.gameOver && Phaser.Input.Keyboard.JustDown(keyRESET)) {
             this.scene.restart();
