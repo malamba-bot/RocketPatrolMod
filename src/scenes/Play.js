@@ -30,6 +30,7 @@ class Play extends Phaser.Scene {
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
         // Game over flag
         this.gameOver = false;
+        // TIMERS ----------------------------------------------------------
         /* Start a timer that will trigger a callback function which will end
             * the game */
             this.timer = this.time.addEvent({
@@ -42,12 +43,21 @@ class Play extends Phaser.Scene {
                 },
                 loop: false,
             });
+        // Timer to reset the background color of time remaining
+        this.timeColorChange = this.time.addEvent({
+            delay: 500,  
+            callback: () => {
+                this.timeLeft.style.backgroundColor = Colors.PINK;
+            },
+            paused: true,
+            loop: true
+        });
         // Init score
         this.p1Score = 0;
         let textConfig = {
             fontFamily: 'Courier',
             fontSize: '28px',
-            backgroundColor: '#facade',
+            backgroundColor: Colors.PINK,
             color: '#843605',
             align: 'right',
             padding: {
@@ -60,7 +70,7 @@ class Play extends Phaser.Scene {
         // Add timer text to center
         this.timeLeft = this.add.text(game.config.width / 2, borderUISize + borderPadding * 2, game.settings.gameTimer, textConfig).setOrigin(0.5, 0);
         // Changed fixed width and background color for score
-        textConfig.backgroundColor = '#F3B141'; 
+        textConfig.backgroundColor = Colors.ORANGE; 
         textConfig.fixedWidth = 100; 
         
         this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding * 2, this.p1Score, textConfig);
@@ -110,7 +120,7 @@ class Play extends Phaser.Scene {
         if (rocket.x < ship.x + ship.width && 
             rocket.x + rocket.width > ship.x && 
             rocket.y < ship.y + ship.height &&
-            rocket.height + rocket.y > ship. y) {
+            rocket.height + rocket.y > ship.y) {
             return true;
         } else {
             return false;
@@ -134,8 +144,12 @@ class Play extends Phaser.Scene {
         })
         // Add to score and timer, and update text
         this.p1Score += ship.points;
-        this.timer.delay += game.settings.timeAdjustment;
+        this.timer.delay += game.settings.timeAdj;
         this.scoreLeft.text = this.p1Score;
         this.sound.play("sfx-explosion");
+
+        // Change timer backgroundColor
+        this.timeLeft.style.backgroundColor = Colors.BLUE;
+        this.timeColorChange.paused = false;
     }
 }
