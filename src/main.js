@@ -15,3 +15,10 @@ let borderPadding = borderUISize / 3;
 
 // Reserve keyboard bindings
 let keyFIRE, keyRESET, keyLEFT, keyRIGHT;
+
+// Define some color values for text
+let Colors = {
+    ORANGE: '#F3B141',
+    PINK: '#FACADE',
+    BLUE: '#3479D3'
+}
