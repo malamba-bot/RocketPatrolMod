@@ -47,6 +47,8 @@ class Play extends Phaser.Scene {
         this.timeColorChange = this.time.addEvent({
             delay: 500,  
             callback: () => {
+                // Pause this timer (which has reset)
+                this.timeColorChange.paused = true;
                 this.timeLeft.style.backgroundColor = Colors.PINK;
             },
             paused: true,
