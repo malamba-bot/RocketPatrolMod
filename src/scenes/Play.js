@@ -82,6 +82,15 @@ class Play extends Phaser.Scene {
         this.highScore = this.add.text(game.config.width - (borderUISize + borderPadding + textConfig.fixedWidth), borderUISize + borderPadding * 2, highScore, textConfig);
         textConfig.fixedWidth = 0;
         this.HI = this.add.text(this.highScore.x - fontSize, borderUISize + borderPadding * 2, "HI:", textConfig);
+        // Create particle effect for explosion
+        this.particlez = this.add.particles(100, 300, 'rocket', {
+            lifespan: 300,
+            duration: 200,
+            quantity: 10,
+            //angle: { min: -180, max: 180 },
+            speed: 100,
+            active: true
+        });
 
     }
 
