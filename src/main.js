@@ -23,3 +23,6 @@ let Colors = {
     BLUE: '#3479D3',
     RED: '#EA4B4B',
 }
+
+// Highscore variable
+let highScore = 0;
