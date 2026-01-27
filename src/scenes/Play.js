@@ -56,9 +56,11 @@ class Play extends Phaser.Scene {
         });
         // Init score
         this.p1Score = 0;
+// TEXT --------------------------------------------------------------------
+        let fontSize = 28;
         let textConfig = {
             fontFamily: 'Courier',
-            fontSize: '28px',
+            fontSize: `${fontSize}px`,
             backgroundColor: Colors.PINK,
             color: '#843605',
             align: 'right',
@@ -75,8 +77,11 @@ class Play extends Phaser.Scene {
         textConfig.backgroundColor = Colors.ORANGE; 
         textConfig.fixedWidth = 100; 
         
+        // Current and highscore text
         this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding * 2, this.p1Score, textConfig);
+        this.highScore = this.add.text(game.config.width - (borderUISize + borderPadding + textConfig.fixedWidth), borderUISize + borderPadding * 2, highScore, textConfig);
         textConfig.fixedWidth = 0;
+        this.HI = this.add.text(this.highScore.x - fontSize, borderUISize + borderPadding * 2, "HI:", textConfig);
 
     }
 
@@ -148,6 +153,13 @@ class Play extends Phaser.Scene {
         this.p1Score += ship.points;
         this.timer.delay += game.settings.timeAdj;
         this.scoreLeft.text = this.p1Score;
+        // Update highscore if needed
+        if (this.p1Score > highScore) {
+            highScore = this.p1Score;
+            this.highScore.text = highScore;    
+        }
+
+        // Play sound
         this.sound.play("sfx-explosion");
 
         // Change timer backgroundColor
