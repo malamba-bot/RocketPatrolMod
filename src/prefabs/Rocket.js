@@ -44,6 +44,9 @@ class Rocket extends Phaser.GameObjects.Sprite {
             // Subtract from scene timer
             this.scene.timer.delay -= game.settings.timeAdj;
             this.y = game.config.height - borderUISize - borderPadding;
+            // Change timer background color
+            this.scene.timeLeft.style.backgroundColor = Colors.RED;
+            this.scene.timeColorChange.paused = false;
         }
     }
 

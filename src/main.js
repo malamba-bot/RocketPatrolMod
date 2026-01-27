@@ -20,5 +20,6 @@ let keyFIRE, keyRESET, keyLEFT, keyRIGHT;
 let Colors = {
     ORANGE: '#F3B141',
     PINK: '#FACADE',
-    BLUE: '#3479D3'
+    BLUE: '#3479D3',
+    RED: '#EA4B4B',
 }
