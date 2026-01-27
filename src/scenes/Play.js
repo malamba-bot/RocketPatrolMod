@@ -28,40 +28,61 @@ class Play extends Phaser.Scene {
         keyRESET = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+        // Game over flag
+        this.gameOver = false;
+        // TIMERS ----------------------------------------------------------
+        /* Start a timer that will trigger a callback function which will end
+            * the game */
+            this.timer = this.time.addEvent({
+                delay: game.settings.gameTimer,
+                callback: () => {
+                    this.add.text(game.config.width/2, game.config.height/2, "GAME OVER", textConfig).setOrigin(0.5);
+                    this.add.text(game.config.width/2, game.config.height/2 + 64, "Press (R) to Restart or ← for Menu", textConfig).setOrigin(0.5);
+                    this.gameOver = true;
+
+                },
+                loop: false,
+            });
+        // Timer to reset the background color of time remaining
+        this.timeColorChange = this.time.addEvent({
+            delay: 500,  
+            callback: () => {
+                // Pause this timer (which has reset)
+                this.timeColorChange.paused = true;
+                this.timeLeft.style.backgroundColor = Colors.PINK;
+            },
+            paused: true,
+            loop: true
+        });
         // Init score
         this.p1Score = 0;
-        let scoreConfig = {
+        let textConfig = {
             fontFamily: 'Courier',
             fontSize: '28px',
-            backgroundColor: '#F3B141',
+            backgroundColor: Colors.PINK,
             color: '#843605',
             align: 'right',
             padding: {
                 top: 5,
                 bottom: 5,
             },
-            fixedWidth: 100
+            fixedWidth: 50
         }
-        this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding * 2, this.p1Score, scoreConfig);
-        scoreConfig.fixedWidth = 0;
 
-        // 60-sec play clock
-        /* Will delayedCall will trigger an event. The first parameter
-        *  specifies how long will pass before the event is triggered, and the
-        *  second is the callback function that will be run after the event is
-        *  triggered. */
+        // Add timer text to center
+        this.timeLeft = this.add.text(game.config.width / 2, borderUISize + borderPadding * 2, game.settings.gameTimer, textConfig).setOrigin(0.5, 0);
+        // Changed fixed width and background color for score
+        textConfig.backgroundColor = Colors.ORANGE; 
+        textConfig.fixedWidth = 100; 
+        
+        this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding * 2, this.p1Score, textConfig);
+        textConfig.fixedWidth = 0;
 
-        // Game over flag
-        this.gameOver = false;
-
-        this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
-            this.add.text(game.config.width/2, game.config.height/2, "GAME OVER", scoreConfig).setOrigin(0.5);
-            this.add.text(game.config.width/2, game.config.height/2 + 64, "Press (R) to Restart or ← for Menu", scoreConfig).setOrigin(0.5);
-            this.gameOver = true;
-        }, null, this);
     }
 
     update() {
+        // Update timer text
+        this.timeLeft.text = Math.ceil(this.timer.getRemainingSeconds());
         // Check key input for restart
         if(this.gameOver && Phaser.Input.Keyboard.JustDown(keyRESET)) {
             this.scene.restart();
@@ -101,7 +122,7 @@ class Play extends Phaser.Scene {
         if (rocket.x < ship.x + ship.width && 
             rocket.x + rocket.width > ship.x && 
             rocket.y < ship.y + ship.height &&
-            rocket.height + rocket.y > ship. y) {
+            rocket.height + rocket.y > ship.y) {
             return true;
         } else {
             return false;
@@ -123,9 +144,14 @@ class Play extends Phaser.Scene {
             ship.alpha = 1;
             boom.destroy();
         })
-        // Add to score and update text
+        // Add to score and timer, and update text
         this.p1Score += ship.points;
+        this.timer.delay += game.settings.timeAdj;
         this.scoreLeft.text = this.p1Score;
         this.sound.play("sfx-explosion");
+
+        // Change timer backgroundColor
+        this.timeLeft.style.backgroundColor = Colors.BLUE;
+        this.timeColorChange.paused = false;
     }
 }
