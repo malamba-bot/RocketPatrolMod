@@ -57,7 +57,6 @@ class Play extends Phaser.Scene {
         // Init score
         this.p1Score = 0;
 // TEXT --------------------------------------------------------------------
-        let fontSize = 28;
         let textConfig = {
             fontFamily: 'Courier',
             fontSize: `${fontSize}px`,
@@ -77,12 +76,11 @@ class Play extends Phaser.Scene {
         textConfig.backgroundColor = Colors.ORANGE; 
         textConfig.fixedWidth = 100; 
         
-        // Current and highscore text
+        // Current and high score text 
         this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding * 2, this.p1Score, textConfig);
         this.highScore = this.add.text(game.config.width - (borderUISize + borderPadding + textConfig.fixedWidth), borderUISize + borderPadding * 2, highScore, textConfig);
         textConfig.fixedWidth = 0;
         this.HI = this.add.text(this.highScore.x - fontSize, borderUISize + borderPadding * 2, "HI:", textConfig);
-
     }
 
     update() {
