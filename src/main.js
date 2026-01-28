@@ -24,5 +24,6 @@ let Colors = {
     RED: '#EA4B4B',
 }
 
-// Highscore variable
+//Globals
 let highScore = 0;
+let fontSize = 28;
