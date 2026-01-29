@@ -81,18 +81,6 @@ class Play extends Phaser.Scene {
         this.highScore = this.add.text(game.config.width - (borderUISize + borderPadding + textConfig.fixedWidth), borderUISize + borderPadding * 2, highScore, textConfig);
         textConfig.fixedWidth = 0;
         this.HI = this.add.text(this.highScore.x - fontSize, borderUISize + borderPadding * 2, "HI:", textConfig);
-        // Create particle EMITTER for the ship explosion
-        this.explosion = this.add.particles(0, 0, 'explosion', {
-            anim: 'explode',
-            lifespan: 533,
-            scale:{min: 0.3, max: 1},
-            emitZone:
-            {
-                type: 'random',
-                source: new Phaser.Geom.Rectangle(0, 0, 50, 50),
-            },            
-            emitting: false
-        });
     }
 
     update() {
@@ -148,12 +136,16 @@ class Play extends Phaser.Scene {
         // Temp hide ship
         ship.alpha = 0;
         // Create explosion at ship's position
-        /* emitParticle(x....) emits x number of particles specified by the
-            * emitter it is called on rather than switching the emitter on */
-        this.explosion.emitParticle(15, ship.x, ship.y);
-        this.time.delayedCall(533, () => {
+        let boom = this.add.sprite(ship.x, ship.y, "explosion").setOrigin(0, 0);
+        boom.anims.play("explode");
+        /* the .on method listens for events. The first parameter is the
+            * event being listened for, and the second is the callback
+            * function to be run when the event is heard. In this case, the
+            * animation manager will trigger the animationcomplete event.*/
+        boom.on("animationcomplete", () => {
             ship.reset();
             ship.alpha = 1;
+            boom.destroy();
         })
         // Add to score and timer, and update text
         this.p1Score += ship.points;
