@@ -4,7 +4,7 @@ let config = {
     width: 640,
     height: 480,
     // Add scenes using the names of the class files
-    scene: [Menu, Play]
+    scene: [Menu, Play],
 }
 
 let game = new Phaser.Game(config);
