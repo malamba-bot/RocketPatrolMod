@@ -14,11 +14,11 @@ class Menu extends Phaser.Scene {
         this.load.image("starfield", "./assets/starfield.png");
         this.load.image("yellowStarfield", "./assets/yellowStarfield.png");
         // Load spritesheet
-        this.load.spritesheet("explosion", "./assets/explosion.png", {
+        this.load.spritesheet("explosion", "./assets/explosion_pfx.png", {
             frameWidth: 64,
-            frameHeight: 32,
+            frameHeight: 64,
             startFrame: 0,
-            endFrame: 9
+            endFrame: 7,
         })
         // Load audio
         this.load.audio('sfx-select', './assets/sfx-select.wav')
@@ -32,8 +32,8 @@ class Menu extends Phaser.Scene {
         // spites
         this.anims.create({
             key: "explode",
-            frames: this.anims.generateFrameNumbers("explosion", { start: 0, end: 9, first: 0 }),
-            frameRate: 30
+            frames: this.anims.generateFrameNumbers("explosion", { start: 0, end: 7, first: 0 }),
+            frameRate: 15
         })
 
         let menuConfig = {
