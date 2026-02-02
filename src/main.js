@@ -3,6 +3,12 @@ let config = {
     type: Phaser.AUTO,
     width: 640,
     height: 480,
+    physics: {
+        default: 'arcade',
+        arcade: {
+            debug: true,
+        }
+    },
     // Add scenes using the names of the class files
     scene: [Menu, Play],
 }
