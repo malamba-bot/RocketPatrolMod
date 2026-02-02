@@ -157,6 +157,7 @@ class Play extends Phaser.Scene {
         })
         // DEBRIS -------------------------------------
         new Debris(this, ship.x, ship.y);
+        new Debris(this, ship.x, ship.y);
         //---------------------------------------------
         // Add to score and timer, and update text
         this.p1Score += ship.points;
