@@ -11,10 +11,10 @@ class Play extends Phaser.Scene {
         // Green UI background
         this.add.rectangle(0, borderUISize + borderPadding, game.config.width, borderUISize * 2, 0x00FF00).setOrigin(0, 0);
         // White borders
-        this.add.rectangle(0, 0, game.config.width, borderUISize, 0xFFFFFF).setOrigin(0, 0);
-        this.add.rectangle(0, game.config.height - borderUISize, game.config.width, borderUISize, 0xFFFFFF).setOrigin(0, 0);
-        this.add.rectangle(0, 0, borderUISize, game.config.height, 0xFFFFFF).setOrigin(0, 0);
-        this.add.rectangle(game.config.width - borderUISize, 0, borderUISize, game.config.height, 0xFFFFFF).setOrigin(0, 0);
+        this.add.rectangle(0, 0, game.config.width, borderUISize, 0xFFFFFF).setOrigin(0, 0).setDepth(1000);
+        this.add.rectangle(0, game.config.height - borderUISize, game.config.width, borderUISize, 0xFFFFFF).setOrigin(0, 0).setDepth(1000);
+        this.add.rectangle(0, 0, borderUISize, game.config.height, 0xFFFFFF).setOrigin(0, 0).setDepth(1000);
+        this.add.rectangle(game.config.width - borderUISize, 0, borderUISize, game.config.height, 0xFFFFFF).setOrigin(0, 0).setDepth(1000);
 
         // Add p1 rocket
         this.p1Rocket = new Rocket(this, game.config.width/2, game.config.height - borderUISize - borderPadding, 'rocket').setOrigin(0.5, 0);
@@ -30,17 +30,26 @@ class Play extends Phaser.Scene {
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
         // Game over flag
         this.gameOver = false;
+        let textConfig = {
+            fontFamily: 'Courier',
+            fontSize: `${fontSize}px`,
+            backgroundColor: Colors.PINK,
+            color: '#843605',
+            align: 'right',
+            padding: {
+                top: 5,
+                bottom: 5,
+            },
+            fixedWidth: 50
+        }
+        // PLAY MUSIC
+        this.sound.play("space-song", {volume: 0.5});
         // TIMERS ----------------------------------------------------------
         /* Start a timer that will trigger a callback function which will end
             * the game */
             this.timer = this.time.addEvent({
                 delay: game.settings.gameTimer,
-                callback: () => {
-                    this.add.text(game.config.width/2, game.config.height/2, "GAME OVER", textConfig).setOrigin(0.5);
-                    this.add.text(game.config.width/2, game.config.height/2 + 64, "Press (R) to Restart or ← for Menu", textConfig).setOrigin(0.5);
-                    this.gameOver = true;
-
-                },
+                callback: () => {this.endGame(textConfig)},
                 loop: false,
             });
         // Timer to reset the background color of time remaining
@@ -57,18 +66,6 @@ class Play extends Phaser.Scene {
         // Init score
         this.p1Score = 0;
 // TEXT --------------------------------------------------------------------
-        let textConfig = {
-            fontFamily: 'Courier',
-            fontSize: `${fontSize}px`,
-            backgroundColor: Colors.PINK,
-            color: '#843605',
-            align: 'right',
-            padding: {
-                top: 5,
-                bottom: 5,
-            },
-            fixedWidth: 50
-        }
 
         // Add timer text to center
         this.timeLeft = this.add.text(game.config.width / 2, borderUISize + borderPadding * 2, game.settings.gameTimer, textConfig).setOrigin(0.5, 0);
@@ -93,6 +90,15 @@ class Play extends Phaser.Scene {
             },            
             emitting: false
         });
+        // Rocket and debris collision
+        this.debrisGroup = this.add.group();
+        this.physics.add.collider(this.debrisGroup, this.p1Rocket, (debris, rocket) => {
+            this.explosion.emitParticle(8, rocket.x, rocket.y);
+            this.sound.play("sfx-explosion");
+            debris.destroy();
+            rocket.destroy();
+            this.endGame(textConfig);
+        })
     }
 
     update() {
@@ -100,9 +106,11 @@ class Play extends Phaser.Scene {
         this.timeLeft.text = Math.ceil(this.timer.getRemainingSeconds());
         // Check key input for restart
         if(this.gameOver && Phaser.Input.Keyboard.JustDown(keyRESET)) {
+            this.sound.stopByKey('space-song');
             this.scene.restart();
         }
         if(this.gameOver && Phaser.Input.Keyboard.JustDown(keyLEFT)) {
+            this.sound.stopByKey('space-song');
             this.scene.start("menuScene");
         }
         // Scroll backgrounds
@@ -130,6 +138,7 @@ class Play extends Phaser.Scene {
             this.p1Rocket.reset();
             this.shipExplode(this.ship01);
         }
+
     }
 
     checkCollision(rocket, ship) {
@@ -147,14 +156,22 @@ class Play extends Phaser.Scene {
     shipExplode(ship) {
         // Temp hide ship
         ship.alpha = 0;
+        // Stop ship
+        ship.moving = false;
         // Create explosion at ship's position
         /* emitParticle(x....) emits x number of particles specified by the
             * emitter it is called on rather than switching the emitter on */
         this.explosion.emitParticle(15, ship.x, ship.y);
-        this.time.delayedCall(533, () => {
+            // Create two new debris pieces
+        this.time.delayedCall(300, () => {
+            new Debris(this, ship.x, ship.y);
+            new Debris(this, ship.x, ship.y);
             ship.reset();
             ship.alpha = 1;
+            ship.moving = true;
         })
+        // DEBRIS -------------------------------------
+        //---------------------------------------------
         // Add to score and timer, and update text
         this.p1Score += ship.points;
         this.timer.delay += game.settings.timeAdj;
@@ -171,5 +188,11 @@ class Play extends Phaser.Scene {
         // Change timer backgroundColor
         this.timeLeft.style.backgroundColor = Colors.BLUE;
         this.timeColorChange.paused = false;
+    }
+
+    endGame(textConfig) {
+        this.add.text(game.config.width/2, game.config.height/2 + 64, "Press (R) to Restart or ← for Menu", textConfig).setOrigin(0.5);
+        this.add.text(game.config.width/2, game.config.height/2, "GAME OVER", textConfig).setOrigin(0.5);
+        this.gameOver = true;
     }
 }
