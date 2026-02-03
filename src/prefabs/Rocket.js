@@ -12,6 +12,9 @@ class Rocket extends Phaser.GameObjects.Sprite {
         this.scene = scene;
         // Add this object to the calling scene
         scene.add.existing(this);
+        // Add a physics body to check for collision with debris
+        scene.physics.add.existing(this);
+        this.body.setImmovable(true);
         this.isFiring = false;
         this.moveSpeed = 2;
         // GameObjects do not have access to loaded textures and sounds, so
