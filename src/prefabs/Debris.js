@@ -14,7 +14,16 @@ class Debris extends Phaser.Physics.Arcade.Sprite {
         this.direction = Math.random() < 0.5 ? 1 : -1;
         this.setVelocityX(Phaser.Math.Between(0, 100) * this.direction);
         this.setGravityY(200);
+    }
 
+    // preUpdate will be called on sprites in the update list of a scene
+    preUpdate(time, delta) {
+        // since this is overriding the sprite object's preUpdate, run the usual preUpdate sequence before
+        // doing anything else
+        super.preUpdate(time, delta);
+        // Destory debris to avoid too many sprites existing at once
+        if (this.y > game.config.height - borderUISize)
+            this.destroy();
     }
 }
 
