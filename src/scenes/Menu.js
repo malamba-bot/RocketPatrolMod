@@ -13,6 +13,9 @@ class Menu extends Phaser.Scene {
         this.load.image("spaceship", "./assets/spaceship.png");
         this.load.image("starfield", "./assets/starfield.png");
         this.load.image("yellowStarfield", "./assets/starfield_yellow.png");
+        this.load.image("spaceship_debris_0", "./assets/spaceship_debris_0.png");
+        this.load.image("spaceship_debris_1", "./assets/spaceship_debris_1.png");
+        this.load.image("spaceship_debris_2", "./assets/spaceship_debris_2.png");
         // Load spritesheet
         this.load.spritesheet("explosion", "./assets/pfx_explosion.png", {
             frameWidth: 64,
@@ -24,6 +27,7 @@ class Menu extends Phaser.Scene {
         this.load.audio('sfx-select', './assets/sfx-select.wav')
         this.load.audio('sfx-explosion', './assets/sfx_explosion.wav')
         this.load.audio('sfx-shot', 'assets/sfx_laser.wav')
+        this.load.audio('space-song', 'assets/space_song.wav')
     }
 
     create() {
